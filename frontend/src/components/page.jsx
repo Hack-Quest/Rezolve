@@ -3,7 +3,6 @@ import RawLogFeed from "./RawLogFeed";
 import AgentPipeline from "./AgentPipeline";
 import ExecutiveBrief from "./ExecutiveBrief";
 import Header from "./Header";
-import Footer from "./Footer";
 import { AnimatePresence, motion } from "framer-motion";
 import { useSSEPipeline } from "../hooks/useSSEPipeline";
 import {
@@ -153,7 +152,6 @@ export default function Page() {
             Loading alerts…
           </div>
         </div>
-        <Footer />
       </div>
     );
   }
@@ -340,8 +338,6 @@ export default function Page() {
           </AnimatePresence>
         </div>
       </main>
-
-      <Footer />
     </div>
   );
 }
