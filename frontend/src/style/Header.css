@@ -1,0 +1,60 @@
+@reference "tailwindcss"; /* 👈 ADD THIS LINE TO FIX THE ERROR */
+@reference "../index.css";
+.app-header {
+  @apply sticky top-0 z-40 w-full bg-[#fff8f7]/80 backdrop-blur-md border-b border-[#e5bdbe]/40 py-4 px-4 md:px-6;
+}
+
+.header-container {
+  @apply max-w-[1440px] mx-auto flex flex-row items-center justify-between;
+}
+/* Logo Styles */
+.logo-section {
+  @apply flex items-center gap-2.5;
+}
+
+.logo-icon-wrapper {
+  @apply bg-[#b80035] p-2 rounded-[4px];
+}
+
+.logo-icon {
+  @apply h-4.5 w-4.5 text-white;
+}
+
+.logo-text {
+  @apply font-display font-extrabold text-[19px] tracking-tight text-[#281718];
+}
+
+/* Navigation Menu Styles */
+.nav-menu {
+  @apply hidden md:flex items-center gap-8 font-sans text-xs font-semibold uppercase tracking-wider text-[#5c3f40];
+}
+
+.nav-link {
+  @apply hover:text-[#b80035] transition-colors;
+}
+
+/* Actions & Operator Styles */
+.actions-section {
+  @apply flex items-center gap-4 md:gap-6;
+}
+
+.operator-badge {
+  @apply hidden lg:flex items-center gap-2.5 bg-white px-3 py-1.5 rounded-[4px] border border-[#e5bdbe];
+}
+
+.status-dot {
+  @apply h-2 w-2 rounded-full bg-emerald-500 animate-pulse;
+}
+
+.operator-info {
+  @apply font-mono text-[12px] tracking-[0.05em] text-[#281718] font-medium flex items-center gap-2;
+}
+
+.operator-info .divider {
+  @apply text-[#e5bdbe];
+}
+
+/* CTA Button Styles */
+.launch-button {
+  @apply bg-[#b80035] hover:bg-[#e11d48] text-white font-sans font-bold text-xs px-5 py-2.5 rounded-xl transition-all cursor-pointer shadow-sm active:scale-95 text-center uppercase tracking-wider;
+}

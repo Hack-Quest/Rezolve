@@ -1,0 +1,118 @@
+@import "tailwindcss";
+
+@theme {
+  /* Brand Colors */
+  --color-primary: #b80035;
+  --color-primary-container: #e11d48;
+  --color-on-primary: #ffffff;
+  --color-on-primary-container: #fffaf9;
+
+  --color-secondary: #b90538;
+  --color-secondary-container: #dc2c4f;
+
+  --color-tertiary: #006855;
+  --color-tertiary-container: #00836c;
+
+  --color-error: #ba1a1a;
+  --color-error-container: #ffdad6;
+
+  /* Surface & Outlines */
+  --color-surface: #ffffff;
+  --color-surface-container: #ffe9e9;
+  --color-on-surface: #281718; /* Maps to heading/interactive text */
+  --color-outline: #906f70;
+  --color-outline-variant: #e5bdbe;
+
+  /* Typography */
+  --font-headline: "Hanken Grotesk", sans-serif;
+  --font-body: "Inter", sans-serif;
+  --font-mono: "Geist Mono", monospace;
+
+  /* Spacing/Utilities used in your layout */
+  --spacing-gutter: 2rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+
+  /* Custom Animations */
+  --animate-slide-in: slide-in 0.3s ease-out forwards;
+  --animate-fade-in: fade-in 0.2s ease-out forwards;
+  --animate-scale-up: scale-up 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  --animate-dash: dash 20s linear infinite;
+  --animate-spin-slow: spin 8s linear infinite;
+
+  @keyframes slide-in {
+    from {
+      transform: translateY(1rem);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  @keyframes scale-up {
+    from {
+      transform: scale(0.95);
+      opacity: 0;
+    }
+    to {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+  @keyframes dash {
+    to {
+      stroke-dashoffset: -1000;
+    }
+  }
+  --animate-float: float 4s ease-in-out infinite;
+
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-8px);
+    }
+  }
+}
+
+@layer base {
+  body {
+    font-family: var(--font-body);
+    background-color: #fff8f7;
+    color: #5c3f40;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-headline);
+    color: #281718;
+  }
+}
+
+/* Custom Overrides & Utilites */
+.glassmorphic {
+  background-color: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.animate-dash {
+  stroke-dasharray: 8 6;
+  animation: dash 25s linear infinite;
+}
