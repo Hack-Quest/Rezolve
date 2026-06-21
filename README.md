@@ -290,6 +290,6 @@ Run any of them with `python test_pipeline.py alert-XXX`, or pick one from the d
 
 ## Team
 
-Built by **Team HACKOPS**:
+Built by **Team HACKQUEST**:
 
 Anshika Khare · Animesh Mudit · Anshuman Awasthi · Anshika
