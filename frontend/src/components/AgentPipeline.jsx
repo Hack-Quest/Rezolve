@@ -2,93 +2,127 @@ import React from "react";
 import { Search, Microscope, Zap, SquareTerminal, Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
 
-export default function AgentPipeline({ pipelineStep }) {
-  // Define agent card details
+/**
+ * AgentPipeline
+ *
+ * Props:
+ *   pipelineStep : number (0–4) — used for the vertical progress line animation
+ *   agentStates  : { scout, investigator, impact, commander }
+ *                  each entry: null | { status: "running"|"done", output, elapsed_s }
+ */
+export default function AgentPipeline({ pipelineStep, agentStates = {} }) {
+  // Build a data-row array for each agent from the live SSE output.
+  // Falls back to placeholder dashes while the agent hasn't run yet.
+  function scoutRows(output) {
+    if (!output) return [
+      { label: "Target", val: "—" },
+      { label: "Attacker IP", val: "—" },
+      { label: "Action", val: "—" },
+    ];
+    return [
+      { label: "Target", val: output.target },
+      { label: "Attacker IP", val: output.attacker_ip },
+      { label: "Action", val: output.action },
+    ];
+  }
+
+  function investigatorRows(output) {
+    if (!output) return [
+      { label: "Diagnosis", val: "—" },
+      { label: "Confidence", val: "—" },
+    ];
+    return [
+      { label: "Diagnosis", val: output.diagnosis },
+      { label: "Confidence", val: `${output.confidence_score}%`, highlightVal: output.confidence_score >= 80 },
+    ];
+  }
+
+  function impactRows(output) {
+    if (!output) return [
+      { label: "Severity", val: "—" },
+      { label: "Asset", val: "—" },
+      { label: "Damage", val: "—" },
+    ];
+    return [
+      { label: "Severity", val: output.severity, highlightVal: true },
+      { label: "Asset", val: output.affected_asset, boldVal: true },
+      { label: "Damage", val: output.potential_damage },
+    ];
+  }
+
+  function commanderRows(output) {
+    if (!output) return [
+      { label: "Headline", val: "—" },
+      { label: "Actions", val: "—" },
+    ];
+    return [
+      { label: "Headline", val: output.summary_headline },
+      { label: "Actions", val: `${(output.recommended_actions || []).length} steps` },
+    ];
+  }
+
   const agents = [
     {
       index: 1,
+      key: "scout",
       name: "Scout",
       desc: "picks out the key facts",
       icon: Search,
-      time: "1.2s",
       colorClass: "bg-slate-800",
       highlight: false,
-      data: [
-        { label: "Source IP", val: "198.51.100.42" },
-        { label: "Port", val: "8080" },
-        { label: "Framework", val: "Apache Struts" },
-        { label: "Action", val: "unauthorized_db_access" },
-      ],
+      rows: scoutRows,
     },
     {
       index: 2,
+      key: "investigator",
       name: "Investigator",
       desc: "names the vulnerability",
       icon: Microscope,
-      time: "3.1s",
       colorClass: "bg-slate-800",
       highlight: false,
-      data: [
-        { label: "CVE", val: "CVE-2017-5638" },
-        { label: "CVSS", val: "9.8 · Critical", highlightVal: true },
-        { label: "Attack type", val: "remote code execution" },
-        { label: "Confidence", val: "0.92" },
-      ],
+      rows: investigatorRows,
     },
     {
       index: 3,
+      key: "impact",
       name: "Impact",
       desc: "finds what's actually at risk",
       icon: Zap,
-      time: "4.8s",
       colorClass: "bg-rose-600",
       highlight: true,
-      data: [
-        { label: "Asset ID", val: "AST-PAY-0042" },
-        { label: "Asset", val: "Production Struts Gateway", boldVal: true },
-        { label: "Segment", val: "Payments Gateway" },
-        { label: "Records", val: "5,247,891", boldVal: true },
-      ],
+      rows: impactRows,
     },
     {
       index: 4,
+      key: "commander",
       name: "Commander",
       desc: "writes the action plan",
       icon: SquareTerminal,
-      time: "2.7s",
       colorClass: "bg-slate-800",
       highlight: false,
-      data: [
-        { label: "Severity", val: "Critical" },
-        { label: "Actions", val: "3 prioritized" },
-        { label: "Posture", val: "isolate · escalate · remediate" },
-      ],
+      rows: commanderRows,
     },
   ];
 
-  // Define card variants for Framer Motion pop animation
   const cardVariants = {
     incomplete: {
       opacity: 0.5,
       scale: 1,
-      y: 0,
       transition: { duration: 0.3 },
     },
     completed: {
       opacity: 1,
       scale: [1, 1.05, 1],
-      y: 0,
       transition: {
         opacity: { duration: 0.4 },
         scale: { duration: 0.4, times: [0, 0.5, 1] },
-        y: { duration: 0.4 },
       },
     },
   };
 
   return (
     <div className="col-span-5 h-full flex flex-col min-h-0 bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden select-none">
-      {/* Header block */}
+      {/* Header */}
       <div className="shrink-0 p-3 border-b border-slate-100 font-bold text-slate-800 uppercase tracking-wider text-xs flex justify-between items-center">
         <span>02 // THE FOUR AI AGENTS</span>
         <span className="material-symbols-outlined text-slate-400 text-[16px]">
@@ -96,9 +130,9 @@ export default function AgentPipeline({ pipelineStep }) {
         </span>
       </div>
 
-      {/* Agents pipeline container */}
+      {/* Pipeline cards */}
       <div className="flex-1 overflow-y-auto min-h-0 p-4 space-y-3 relative">
-        {/* Dynamic Vertical Connecting Line */}
+        {/* Vertical connecting line */}
         <div className="absolute left-[36px] top-[40px] bottom-[40px] w-px bg-slate-200 z-0">
           <motion.div
             className="absolute top-0 left-0 w-full bg-gradient-to-b from-slate-800 via-rose-500 to-rose-600 origin-top"
@@ -119,11 +153,12 @@ export default function AgentPipeline({ pipelineStep }) {
           />
         </div>
 
-        {/* Agent Cards */}
         {agents.map((agent) => {
-          const isCompleted = pipelineStep >= agent.index;
-          const isProcessing = pipelineStep === agent.index - 1;
+          const state = agentStates[agent.key] || null;
+          const isCompleted = state?.status === "done";
+          const isProcessing = state?.status === "running";
           const AgentIcon = agent.icon;
+          const dataRows = agent.rows(state?.output ?? null);
 
           return (
             <motion.div
@@ -136,11 +171,11 @@ export default function AgentPipeline({ pipelineStep }) {
               {/* Avatar Ring */}
               <div
                 className={`flex-none w-8 h-8 rounded-full border-4 border-white flex items-center justify-center shadow-sm transition-all duration-300 ${
-                  isCompleted ? agent.colorClass : "bg-slate-300"
+                  isCompleted ? agent.colorClass : isProcessing ? "bg-amber-400" : "bg-slate-300"
                 } ${isCompleted && agent.highlight ? "ring-2 ring-rose-100" : ""}`}
               >
                 {isProcessing ? (
-                  <Loader2 className="w-3.5 h-3.5 text-slate-500 animate-spin" />
+                  <Loader2 className="w-3.5 h-3.5 text-white animate-spin" />
                 ) : (
                   <AgentIcon className="w-3.5 h-3.5 text-white" />
                 )}
@@ -176,7 +211,7 @@ export default function AgentPipeline({ pipelineStep }) {
                     </span>
                   </h3>
 
-                  {/* Status Badge */}
+                  {/* Status badge */}
                   {isCompleted ? (
                     <span
                       className={`text-[10px] font-mono px-2 py-0.5 rounded border ${
@@ -185,12 +220,12 @@ export default function AgentPipeline({ pipelineStep }) {
                           : "text-emerald-600 bg-emerald-50 border-emerald-100"
                       }`}
                     >
-                      ✓ {agent.time}
+                      ✓ {state?.elapsed_s != null ? `${state.elapsed_s}s` : "done"}
                     </span>
                   ) : isProcessing ? (
                     <span className="flex items-center gap-1 text-[10px] font-mono text-amber-600 bg-amber-50 px-2 py-0.5 rounded border border-amber-100 animate-pulse">
                       <Loader2 className="w-2.5 h-2.5 animate-spin" />
-                      Running...
+                      Running…
                     </span>
                   ) : (
                     <span className="text-[10px] font-mono text-slate-400 bg-slate-50 px-2 py-0.5 rounded border border-slate-100">
@@ -199,13 +234,13 @@ export default function AgentPipeline({ pipelineStep }) {
                   )}
                 </div>
 
-                {/* Card Data Grid */}
+                {/* Data grid */}
                 <div
-                  className={`grid grid-cols-[80px_1fr] gap-x-2 gap-y-1 text-[10px] pt-1.5 border-t mt-1.5 transition-colors duration-300 ${
+                  className={`grid grid-cols-[90px_1fr] gap-x-2 gap-y-1 text-[10px] pt-1.5 border-t mt-1.5 transition-colors duration-300 ${
                     agent.highlight ? "border-rose-200" : "border-slate-200"
                   }`}
                 >
-                  {agent.data.map((row, idx) => (
+                  {dataRows.map((row, idx) => (
                     <React.Fragment key={idx}>
                       <span
                         className={`font-medium transition-colors duration-300 ${

@@ -41,7 +41,7 @@ app = FastAPI(title="Decision Intelligence Platform", lifespan=lifespan)
 # Next.js dev server runs on a different origin; EventSource needs CORS.
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],  # tighten/loosen as needed
+    allow_origins=["http://localhost:3000", "http://localhost:5173"],  # Next.js / Vite dev
     allow_methods=["GET"],
     allow_headers=["*"],
 )
