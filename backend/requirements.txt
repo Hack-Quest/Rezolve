@@ -1,3 +1,6 @@
 pydantic
 httpx
 dotenv
+fastapi
+uvicorn
+pytest

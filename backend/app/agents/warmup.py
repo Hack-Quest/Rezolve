@@ -66,19 +66,51 @@ class ModelWarmer:
 # --- Module-level "current run" registry ------------------------------
 # Lets router.call_llm() reach the active warmer without threading a new
 # parameter through call_and_validate_with_retry / every agent function.
-_current: ModelWarmer | None = None
+_thread_local = threading.local()
 
 
 def start_new_run() -> ModelWarmer:
     """Call once per pipeline run, as early as possible (sse.py does this
     right at pipeline_start, before Scout)."""
-    global _current
-    _current = ModelWarmer(settings.OLLAMA_MODEL).start()
-    return _current
+    warmer = ModelWarmer(settings.OLLAMA_MODEL).start()
+    _thread_local.current = warmer
+    return warmer
 
 
 def get_current() -> ModelWarmer | None:
-    return _current
+    return getattr(_thread_local, "current", None)
+
+
+def set_current(warmer: ModelWarmer | None) -> None:
+    _thread_local.current = warmer
+
+
+class WarmerPreservingGenerator:
+    """Wraps a generator to preserve the active ModelWarmer across yields in a thread pool.
+    Starlette's StreamingResponse runs sync generators in a thread pool, which means
+    different iterations of the generator can be executed on different threads.
+    This class ensures that the thread-local ModelWarmer reference is set correctly on
+    whatever thread executes the current generator step."""
+
+    def __init__(self, gen):
+        self.gen = gen
+        self.warmer = None
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        if self.warmer is not None:
+            set_current(self.warmer)
+        else:
+            set_current(None)
+        try:
+            res = next(self.gen)
+            if self.warmer is None:
+                self.warmer = get_current()
+            return res
+        finally:
+            set_current(None)
 
 
 def warm_at_startup() -> ModelWarmer:

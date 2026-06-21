@@ -21,7 +21,7 @@ from backend.app.agents.scout import scout_alert
 from backend.app.agents.investigator import investigate_scout_output
 from backend.app.agents.impact import assess_impact
 from backend.app.agents.commander import generate_command
-from backend.app.agents.warmup import start_new_run
+from backend.app.agents.warmup import start_new_run, WarmerPreservingGenerator
 from backend.app.models.schemas import PipelineResults
 
 logger = logging.getLogger("decision_platform.sse")
@@ -58,81 +58,84 @@ def stream_pipeline(raw_alert: str, alert_id: str | None = None) -> Iterator[str
       pipeline_complete       -> full PipelineResults envelope + total time
       pipeline_error          -> {stage, message} if anything throws
     """
-    t0 = time.time()
-    yield _sse("pipeline_start", {"raw_alert": raw_alert})
+    def _generator() -> Iterator[str]:
+        t0 = time.time()
+        yield _sse("pipeline_start", {"raw_alert": raw_alert})
 
-    # Kick off the big model (llama3:8b) loading in the background NOW,
-    # in parallel with Scout + Investigator below — both of which run on
-    # the small qwen model and take a few seconds combined. That's free
-    # head-start time for the big model's load before Impact needs it.
-    start_new_run()
+        # Kick off the big model (llama3:8b) loading in the background NOW,
+        # in parallel with Scout + Investigator below — both of which run on
+        # the small qwen model and take a few seconds combined. That's free
+        # head-start time for the big model's load before Impact needs it.
+        start_new_run()
 
-    try:
-        # --- Scout -----------------------------------------------------
-        yield _sse("agent_start", {"agent": "scout"})
-        ts = time.time()
-        scout = scout_alert(raw_alert)
-        yield _sse("agent_complete", {
-            "agent": "scout",
-            "elapsed_s": round(time.time() - ts, 1),
-            "output": scout.model_dump(),
-        })
+        try:
+            # --- Scout -----------------------------------------------------
+            yield _sse("agent_start", {"agent": "scout"})
+            ts = time.time()
+            scout = scout_alert(raw_alert)
+            yield _sse("agent_complete", {
+                "agent": "scout",
+                "elapsed_s": round(time.time() - ts, 1),
+                "output": scout.model_dump(),
+            })
 
-        # --- Investigator ----------------------------------------------
-        yield _sse("agent_start", {"agent": "investigator"})
-        ts = time.time()
-        investigator = investigate_scout_output(scout)
-        yield _sse("agent_complete", {
-            "agent": "investigator",
-            "elapsed_s": round(time.time() - ts, 1),
-            "output": investigator.model_dump(),
-        })
+            # --- Investigator ----------------------------------------------
+            yield _sse("agent_start", {"agent": "investigator"})
+            ts = time.time()
+            investigator = investigate_scout_output(scout)
+            yield _sse("agent_complete", {
+                "agent": "investigator",
+                "elapsed_s": round(time.time() - ts, 1),
+                "output": investigator.model_dump(),
+            })
 
-        # --- Impact (the wow) ------------------------------------------
-        yield _sse("agent_start", {"agent": "impact"})
-        ts = time.time()
-        impact = assess_impact(scout, investigator, raw_alert)
-        yield _sse("agent_complete", {
-            "agent": "impact",
-            "elapsed_s": round(time.time() - ts, 1),
-            "output": impact.model_dump(),
-        })
+            # --- Impact (the wow) ------------------------------------------
+            yield _sse("agent_start", {"agent": "impact"})
+            ts = time.time()
+            impact = assess_impact(scout, investigator, raw_alert)
+            yield _sse("agent_complete", {
+                "agent": "impact",
+                "elapsed_s": round(time.time() - ts, 1),
+                "output": impact.model_dump(),
+            })
 
-        # --- Commander -------------------------------------------------
-        yield _sse("agent_start", {"agent": "commander"})
-        ts = time.time()
-        commander = generate_command(investigator, impact)
-        yield _sse("agent_complete", {
-            "agent": "commander",
-            "elapsed_s": round(time.time() - ts, 1),
-            "output": commander.model_dump(),
-        })
+            # --- Commander -------------------------------------------------
+            yield _sse("agent_start", {"agent": "commander"})
+            ts = time.time()
+            commander = generate_command(investigator, impact)
+            yield _sse("agent_complete", {
+                "agent": "commander",
+                "elapsed_s": round(time.time() - ts, 1),
+                "output": commander.model_dump(),
+            })
 
-        # --- Final envelope --------------------------------------------
-        envelope = PipelineResults(
-            scout=scout,
-            investigator=investigator,
-            impact=impact,
-            commander=commander,
-        )
-        yield _sse("pipeline_complete", {
-            "total_s": round(time.time() - t0, 1),
-            "results": envelope.model_dump(),
-        })
+            # --- Final envelope --------------------------------------------
+            envelope = PipelineResults(
+                scout=scout,
+                investigator=investigator,
+                impact=impact,
+                commander=commander,
+            )
+            yield _sse("pipeline_complete", {
+                "total_s": round(time.time() - t0, 1),
+                "results": envelope.model_dump(),
+            })
 
-        # Persist results to the in-memory store so /api/alerts/{id} can
-        # serve them later. Only save when we have an alert_id — free-text
-        # alerts have no stable id to key on.
-        if alert_id is not None:
-            try:
-                from backend.app.models.store import store
-                store.save_results(alert_id, envelope)
-                logger.info(f"persisted results for {alert_id}")
-            except Exception:
-                # Never let store persistence break the stream — the pipeline
-                # already completed successfully, the client has its brief.
-                logger.exception(f"failed to persist results for {alert_id}")
+            # Persist results to the in-memory store so /api/alerts/{id} can
+            # serve them later. Only save when we have an alert_id — free-text
+            # alerts have no stable id to key on.
+            if alert_id is not None:
+                try:
+                    from backend.app.models.store import store
+                    store.save_results(alert_id, envelope)
+                    logger.info(f"persisted results for {alert_id}")
+                except Exception:
+                    # Never let store persistence break the stream — the pipeline
+                    # already completed successfully, the client has its brief.
+                    logger.exception(f"failed to persist results for {alert_id}")
 
-    except Exception as e:  # never crash the stream mid-demo
-        logger.exception("pipeline failed")
-        yield _sse("pipeline_error", {"message": f"{type(e).__name__}: {e}"})
+        except Exception as e:  # never crash the stream mid-demo
+            logger.exception("pipeline failed")
+            yield _sse("pipeline_error", {"message": f"{type(e).__name__}: {e}"})
+
+    return WarmerPreservingGenerator(_generator())
