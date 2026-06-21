@@ -33,8 +33,8 @@ export default function Pipeline() {
               patterns and known threat signatures.
             </p>
             <div className="mt-auto pt-4 border-t border-rose-100 font-mono text-[11px] text-primary flex justify-between">
-              <span>Entity Extraction Rate:</span>
-              <span className="font-bold">99.2%</span>
+              <span>Stage:</span>
+              <span className="font-bold">Entity Extraction</span>
             </div>
           </div>
         </div>
@@ -55,8 +55,8 @@ export default function Pipeline() {
               threat intelligence and internal asset maps.
             </p>
             <div className="mt-auto pt-4 border-t border-rose-100 font-mono text-[11px] text-primary flex justify-between">
-              <span>CVE Correlation:</span>
-              <span className="font-bold">Active</span>
+              <span>Stage:</span>
+              <span className="font-bold">CVE Diagnosis</span>
             </div>
           </div>
         </div>
@@ -77,8 +77,8 @@ export default function Pipeline() {
               into potential financial and operational loss.
             </p>
             <div className="mt-auto pt-4 border-t border-rose-100 font-mono text-[11px] text-primary flex justify-between">
-              <span>Asset Match:</span>
-              <span className="font-bold">4.2k</span>
+              <span>Stage:</span>
+              <span className="font-bold">Business Impact</span>
             </div>
           </div>
         </div>
@@ -99,8 +99,8 @@ export default function Pipeline() {
               executive-ready summary briefs.
             </p>
             <div className="mt-auto pt-4 border-t border-rose-100 font-mono text-[11px] text-primary flex justify-between">
-              <span>Playbook Alignment:</span>
-              <span className="font-bold">100%</span>
+              <span>Stage:</span>
+              <span className="font-bold">Action Synthesis</span>
             </div>
           </div>
         </div>
