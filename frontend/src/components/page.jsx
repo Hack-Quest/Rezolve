@@ -55,9 +55,9 @@ export default function Page() {
         }
         setAlerts(data);
         setAlertsLoading(false);
-        const randomAlert = data[Math.floor(Math.random() * data.length)];
-        setSelectedAlertId(randomAlert.id);
-        run(randomAlert.id);
+        const initialAlert = data.find((a) => a.id === "alert-001") || data[0];
+        setSelectedAlertId(initialAlert.id);
+        run(initialAlert.id);
       })
       .catch((err) => {
         if (cancelled) return;
