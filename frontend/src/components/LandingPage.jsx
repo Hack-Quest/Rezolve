@@ -2,7 +2,7 @@ import Header from "./Header";
 import Home from "./Home";
 import Strategy from "./Strategy"; 
 import Pipeline from "./Pipeline";
-import Footer from "./Footer";
+// import Footer from "./Footer";
 
 export default function LandingPage() {
   return (
@@ -22,7 +22,7 @@ export default function LandingPage() {
           <Pipeline />
         </section>
 
-        <Footer />
+        {/* <Footer /> */}
       </main>
     </>
   );

@@ -3,7 +3,7 @@ import RawLogFeed from "./RawLogFeed";
 import AgentPipeline from "./AgentPipeline";
 import ExecutiveBrief from "./ExecutiveBrief";
 import Header from "./Header";
-import Footer from "./Footer";
+// import Footer from "./Footer";
 import { AnimatePresence, motion } from "framer-motion";
 import { useSSEPipeline } from "../hooks/useSSEPipeline";
 import {
@@ -120,28 +120,28 @@ export default function Page() {
     return (
       <div className="min-h-screen bg-slate-100 flex flex-col">
         <Header />
-        <div className="mt-20 flex-1 flex items-center justify-center p-8">
-          <div className="bg-white border border-rose-200 rounded-xl p-8 max-w-md text-center shadow-sm">
-            <AlertTriangle className="w-10 h-10 text-rose-500 mx-auto mb-4" />
-            <h2 className="text-lg font-bold text-slate-900 mb-2">
+
+        <div className="flex-1 flex items-center justify-center px-6 pt-20">
+          <div className="w-full max-w-2xl bg-white border border-rose-200 rounded-2xl p-10 text-center shadow-xl">
+            <AlertTriangle className="w-12 h-12 text-rose-500 mx-auto mb-4" />
+
+            <h2 className="text-3xl font-bold text-slate-900 mb-4">
               Backend unreachable
             </h2>
-            <p className="text-sm text-slate-600 font-mono mb-4">
-              {alertsError}
-            </p>
+
+            <p className="text-base text-slate-600 mb-8">{alertsError}</p>
+
             <button
               onClick={() => window.location.reload()}
-              className="bg-slate-900 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-slate-700 transition-all"
+              className="bg-slate-900 text-white px-6 py-3 rounded-lg hover:bg-slate-700 transition"
             >
               Retry
             </button>
           </div>
         </div>
-        <Footer />
       </div>
     );
   }
-
   // Brief loading state while fetching the alert list on first mount
   if (alertsLoading) {
     return (
@@ -153,7 +153,7 @@ export default function Page() {
             Loading alerts…
           </div>
         </div>
-        <Footer />
+        {/* <Footer /> */}
       </div>
     );
   }
@@ -341,7 +341,7 @@ export default function Page() {
         </div>
       </main>
 
-      <Footer />
+      {/* <Footer /> */}
     </div>
   );
 }

@@ -48,96 +48,92 @@ export default function Home() {
           </div>
 
           {/* Right Dashboard Status Column */}
+          {/* Right Dashboard Status Column */}
           <div className="hidden lg:flex items-center justify-center relative">
-            {/* Glassmorphic Dashboard Panel */}
-            {/* Right Floating Status Panel */}
-            <div className="hidden lg:flex items-center justify-center relative">
-              {/* Outer Glow */}
-              <div className="absolute w-[550px] h-[350px] bg-rose-300/20 blur-3xl rounded-full" />
+            {/* Outer Glow */}
+            <div className="absolute w-[450px] h-[280px] bg-rose-300/15 blur-3xl rounded-full" />
 
-              {/* Floating Glass Card */}
-              <div
-                className="relative animate-float w-[580px] rounded-[28px]
-      bg-white/25
-      backdrop-blur-2xl
-      border border-white/40
-      shadow-[0_20px_80px_rgba(0,0,0,0.12)]
-      p-10"
-              >
-                {/* Header */}
-                <div className="flex justify-between items-center mb-10">
-                  <div className="flex items-center gap-4">
-                    <div className="w-4 h-4 bg-emerald-500 rounded-full animate-pulse" />
+            {/* Floating Glass Card */}
+            <div
+              className="relative animate-float w-[500px] rounded-[24px]
+    bg-white/25
+    backdrop-blur-2xl
+    border border-white/40
+    shadow-[0_20px_60px_rgba(0,0,0,0.10)]
+    p-8"
+            >
+              {/* Header */}
+              <div className="flex justify-between items-center mb-8">
+                <div className="flex items-center gap-3">
+                  <div className="w-3.5 h-3.5 bg-emerald-500 rounded-full animate-pulse" />
 
-                    <span className="font-mono uppercase tracking-[0.25em] text-slate-500 text-sm font-bold">
-                      System Status: Live
-                    </span>
-                  </div>
-
-                  <div className="flex gap-1">
-                    <div className="w-1.5 h-1.5 bg-slate-400 rounded-full" />
-                    <div className="w-1.5 h-1.5 bg-slate-400 rounded-full" />
-                    <div className="w-1.5 h-1.5 bg-slate-400 rounded-full" />
-                  </div>
+                  <span className="font-mono uppercase tracking-[0.22em] text-slate-500 text-xs font-bold">
+                    System Status: Live
+                  </span>
                 </div>
 
-                {/* SCOUT */}
-                <div className="mb-8">
-                  <div className="flex justify-between mb-3">
-                    <span className="font-mono text-slate-600 font-bold">
-                      SCOUT
-                    </span>
+                <div className="flex gap-1">
+                  <div className="w-1.5 h-1.5 bg-slate-400 rounded-full" />
+                  <div className="w-1.5 h-1.5 bg-slate-400 rounded-full" />
+                  <div className="w-1.5 h-1.5 bg-slate-400 rounded-full" />
+                </div>
+              </div>
 
-                    <span className="font-mono text-slate-500">
-                      Ingesting data...
-                    </span>
-                  </div>
+              {/* SCOUT */}
+              <div className="mb-7">
+                <div className="flex justify-between mb-2">
+                  <span className="font-mono text-slate-600 font-bold text-sm">
+                    SCOUT
+                  </span>
 
-                  <div className="h-2 bg-slate-200/50 rounded-full overflow-hidden">
-                    <div className="h-full w-[72%] bg-emerald-500 rounded-full" />
-                  </div>
+                  <span className="font-mono text-slate-500 text-sm">
+                    Ingesting data...
+                  </span>
                 </div>
 
-                {/* INVESTIGATOR */}
-                <div className="mb-8">
-                  <div className="flex justify-between mb-3">
-                    <span className="font-mono text-slate-600 font-bold">
-                      INVESTIGATOR
-                    </span>
+                <div className="h-2 bg-slate-200/50 rounded-full overflow-hidden">
+                  <div className="h-full w-[72%] bg-emerald-500 rounded-full" />
+                </div>
+              </div>
 
-                    <span className="font-mono text-slate-500">
-                      Analyzing CVEs...
-                    </span>
-                  </div>
+              {/* INVESTIGATOR */}
+              <div className="mb-7">
+                <div className="flex justify-between mb-2">
+                  <span className="font-mono text-slate-600 font-bold text-sm">
+                    INVESTIGATOR
+                  </span>
 
-                  <div className="h-2 bg-slate-200/50 rounded-full overflow-hidden">
-                    <div className="h-full w-[45%] bg-rose-600 rounded-full" />
-                  </div>
+                  <span className="font-mono text-slate-500 text-sm">
+                    Analyzing CVEs...
+                  </span>
                 </div>
 
-                {/* COMMANDER */}
-                <div className="mb-10">
-                  <div className="flex justify-between mb-3">
-                    <span className="font-mono text-slate-600 font-bold">
-                      COMMANDER
-                    </span>
+                <div className="h-2 bg-slate-200/50 rounded-full overflow-hidden">
+                  <div className="h-full w-[45%] bg-rose-600 rounded-full" />
+                </div>
+              </div>
 
-                    <span className="font-mono text-slate-500">
-                      Ready for Briefing.
-                    </span>
-                  </div>
+              {/* COMMANDER */}
+              <div className="mb-8">
+                <div className="flex justify-between mb-2">
+                  <span className="font-mono text-slate-600 font-bold text-sm">
+                    COMMANDER
+                  </span>
 
-                  <div className="h-2 bg-slate-200/50 rounded-full overflow-hidden">
-                    <div className="h-full w-[10%] bg-slate-300 rounded-full" />
-                  </div>
+                  <span className="font-mono text-slate-500 text-sm">
+                    Ready for Briefing.
+                  </span>
                 </div>
 
-                {/* Bottom Blocks */}
-                <div className="border-t border-white/30 pt-8 flex justify-between">
-                  <div className="h-12 w-32 rounded-xl bg-rose-100/70" />
-
-                  <div className="h-12 w-32 rounded-xl bg-white/70" />
+                <div className="h-2 bg-slate-200/50 rounded-full overflow-hidden">
+                  <div className="h-full w-[10%] bg-slate-300 rounded-full" />
                 </div>
+              </div>
+
+              {/* Bottom Blocks */}
+              <div className="border-t border-white/30 pt-6 flex justify-between">
+                <div className="h-10 w-24 rounded-xl bg-rose-100/70" />
+                <div className="h-10 w-24 rounded-xl bg-white/70" />
               </div>
             </div>
           </div>

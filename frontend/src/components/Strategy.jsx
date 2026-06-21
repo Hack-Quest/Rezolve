@@ -36,8 +36,8 @@ export default function Strategy() {
               Multi-Agent Solution
             </h3>
             <p className="text-slate-600 font-body leading-relaxed">
-              SETU COMMAND employs specialized agents mirroring a high-stakes
-              War Room. Each node in the pipeline is optimized for a specific
+              REZOLVE employs specialized agents mirroring a high-stakes War
+              Room. Each node in the pipeline is optimized for a specific
               cognitive task, ensuring precision and accountability at every
               stage of the decision-making cycle.
             </p>
