@@ -4,6 +4,7 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 export default function Header() {
   const navigate = useNavigate();
   const location = useLocation();
+  const isOnDemoPage = location.pathname === "/demo";
 
   const handleLogoClick = (e) => {
     e.preventDefault();
@@ -55,15 +56,16 @@ export default function Header() {
             >
               Pipeline
             </a>
-
           </nav>
 
-          <button
-            onClick={() => navigate("/demo")}
-            className="bg-primary text-white px-lg py-2.5 rounded-lg font-headline font-semibold text-[14px] hover:bg-primary/90 transition-all shadow-sm cursor-pointer"
-          >
-            Launch Demo
-          </button>
+          {!isOnDemoPage && (
+            <button
+              onClick={() => navigate("/demo")}
+              className="bg-primary text-white px-lg py-2.5 rounded-lg font-headline font-semibold text-[14px] hover:bg-primary/90 transition-all shadow-sm cursor-pointer"
+            >
+              Launch Demo
+            </button>
+          )}
         </div>
       </div>
     </header>
