@@ -13,6 +13,8 @@ Endpoints:
     GET /api/stream?raw_alert=...        -> SSE stream (free-text alert)
 """
 import logging
+from contextlib import asynccontextmanager
+import anyio
 
 from fastapi import FastAPI, Query, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -24,7 +26,17 @@ from backend.app.models.store import store, StoredAlert
 
 logging.basicConfig(level=logging.INFO)
 
-app = FastAPI(title="Decision Intelligence Platform")
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Pre-load the big model (llama3:8b) the moment the server boots, so the
+    # FIRST alert run during the live demo doesn't eat a cold-load penalty.
+    # Blocks synchronously in a worker thread before the app is ready to accept requests.
+    await anyio.to_thread.run_sync(warm_at_startup)
+    yield
+
+
+app = FastAPI(title="Decision Intelligence Platform", lifespan=lifespan)
 
 # Next.js dev server runs on a different origin; EventSource needs CORS.
 app.add_middleware(
@@ -39,11 +51,6 @@ app.add_middleware(
 # Done at import time (not in a lifespan handler) for simplicity — the store
 # is in-memory only, so there's no async I/O to wait for.
 store.seed_from_sample_file()
-
-# Pre-load the big model (llama3:8b) the moment the server boots, so the
-# FIRST alert run during the live demo doesn't eat a cold-load penalty.
-# Fire-and-forget background thread — doesn't block server startup.
-warm_at_startup()
 
 
 @app.get("/api/health")

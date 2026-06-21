@@ -116,5 +116,10 @@ class WarmerPreservingGenerator:
 def warm_at_startup() -> ModelWarmer:
     """Call once when the FastAPI process boots (main.py), so the very
     first demo alert doesn't eat a cold-load penalty live in front of
-    judges. Independent of any pipeline run."""
-    return ModelWarmer(settings.OLLAMA_MODEL).start()
+    judges. Independent of any pipeline run.
+
+    Warms the model synchronously (blocking).
+    """
+    warmer = ModelWarmer(settings.OLLAMA_MODEL)
+    warmer._warm()
+    return warmer
