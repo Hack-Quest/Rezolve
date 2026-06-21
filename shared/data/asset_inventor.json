@@ -1,0 +1,59 @@
+{
+  "assets": [
+    {
+      "id": "ASSET-001",
+      "name": "Production Database Server",
+      "ip": "10.0.0.5",
+      "port": 5432,
+      "business_criticality": "CRITICAL",
+      "owner": "Data Infrastructure Team",
+      "record_count": 10000000,
+      "data_sensitivity": "HIGH",
+      "business_segment": "Customer Data"
+    },
+    {
+      "id": "ASSET-002",
+      "name": "Public API Gateway",
+      "ip": "10.0.0.10",
+      "port": 443,
+      "business_criticality": "HIGH",
+      "owner": "Gateway Team",
+      "record_count": 250000,
+      "data_sensitivity": "MEDIUM",
+      "business_segment": "API Operations"
+    },
+    {
+      "id": "ASSET-003",
+      "name": "Production Struts Gateway",
+      "ip": "10.0.0.150",
+      "port": 8080,
+      "business_criticality": "CRITICAL",
+      "owner": "Payments Team",
+      "record_count": 5000000,
+      "data_sensitivity": "HIGH",
+      "business_segment": "Payments Gateway"
+    },
+    {
+      "id": "ASSET-004",
+      "name": "Customer Payment Database",
+      "ip": "10.0.0.20",
+      "port": 3306,
+      "business_criticality": "CRITICAL",
+      "owner": "Finance Team",
+      "record_count": 8000000,
+      "data_sensitivity": "HIGH",
+      "business_segment": "Finance"
+    },
+    {
+      "id": "ASSET-005",
+      "name": "Authentication Service",
+      "ip": "10.0.0.25",
+      "port": 8443,
+      "business_criticality": "CRITICAL",
+      "owner": "Identity Team",
+      "record_count": 12000000,
+      "data_sensitivity": "HIGH",
+      "business_segment": "Identity & Auth"
+    }
+    ]
+}

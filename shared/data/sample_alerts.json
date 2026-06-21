@@ -1,0 +1,59 @@
+{
+  "alerts": [
+    {
+      "id": "alert-001",
+      "severity": "CRITICAL",
+      "title": "Apache Struts RCE on Payment Gateway",
+      "raw_log": "Critical Alert: Unauthorized database access attempt via Apache Struts on port 8080 from IP 198.51.100.42. Exploit payload detected in Content-Type header indicating OGNL injection.",
+      "source": "WAF \u00c2\u00b7 web-prod-01",
+      "expected_asset": "Production Struts Gateway",
+      "expected_port": 8080,
+      "expected_playbook": "CRITICAL",
+      "notes": "HERO DEMO ALERT \u00e2\u20ac\u201d the wow moment. Triggers Impact Agent to reveal Production Struts Gateway + 5M records in Payments Gateway segment."
+    },
+    {
+      "id": "alert-002",
+      "severity": "CRITICAL",
+      "title": "Ransomware Signature on Backup Storage",
+      "raw_log": "EDR Alert: Ransomware signature match \u00e2\u20ac\u201d Conti variant hash 7f3a2e9b quarantined on FS-PROD-02. Suspicious file activity on port 9000 from internal host 10.0.0.40.",
+      "source": "EDR \u00c2\u00b7 CrowdSensor",
+      "expected_asset": "Backup Storage Server",
+      "expected_port": 9000,
+      "expected_playbook": "RANSOMWARE",
+      "notes": "Second CRITICAL demo. Triggers ransomware playbook (disconnect, preserve forensics, notify execs)."
+    },
+    {
+      "id": "alert-003",
+      "severity": "HIGH",
+      "title": "SQL Injection on Customer Payment Database",
+      "raw_log": "High Alert: SQL injection attempt detected on port 3306 from IP 203.0.113.45. Malicious payload 'UNION SELECT' identified in /api/transactions endpoint targeting 10.0.0.20.",
+      "source": "API GW \u00c2\u00b7 edge-01",
+      "expected_asset": "Customer Payment Database",
+      "expected_port": 3306,
+      "expected_playbook": "SQL_INJECTION",
+      "notes": "HIGH severity demo. Triggers SQL injection playbook (WAF block, log review, input validation patch)."
+    },
+    {
+      "id": "alert-004",
+      "severity": "MEDIUM",
+      "title": "XSS Payload in HR Portal",
+      "raw_log": "Medium Alert: Cross-site scripting (XSS) payload detected in Employee HR Portal input field on port 8444 from IP 192.0.2.100. Script tag injection attempted in profile bio.",
+      "source": "WAF \u00c2\u00b7 hr-portal",
+      "expected_asset": "Employee HR Portal",
+      "expected_port": 8444,
+      "expected_playbook": "XSS",
+      "notes": "MEDIUM severity demo. Triggers XSS playbook (sanitize content, invalidate sessions, deploy CSP)."
+    },
+    {
+      "id": "alert-005",
+      "severity": "LOW",
+      "title": "Port Scan on SSH Bastion",
+      "raw_log": "Low Alert: Repeated SSH authentication failures from IP 45.146.10.0/24 on port 22. 240 failed root login attempts in 5 minutes. No successful authentication observed.",
+      "source": "SSH \u00c2\u00b7 bastion",
+      "expected_asset": "Internal Git Repository",
+      "expected_port": 3000,
+      "expected_playbook": "LOW",
+      "notes": "LOW severity demo. Note: SSH port 22 not in asset inventory \u00e2\u20ac\u201d pipeline will fall back to LOW playbook. Tests graceful degradation."
+    }
+  ]
+}

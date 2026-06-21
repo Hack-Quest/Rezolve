@@ -1,0 +1,40 @@
+{
+  "CRITICAL": {
+    "playbook_id": "PB-CRIT-01",
+    "steps": [
+      "Isolate affected servers immediately from the main VPC subnet.",
+      "Engage Incident Command Team and initiate P0 communication channel.",
+      "Patch or rotate service credentials for affected machines."
+    ]
+  },
+  "HIGH": {
+    "playbook_id": "PB-HIGH-01",
+    "steps": [
+      "Restrict IP access at the security group level to authorized subnets only.",
+      "Alert On-Call Security Engineer.",
+      "Schedule vulnerability remediation path within 24 hours."
+    ]
+  },
+  "MEDIUM": {
+    "playbook_id": "PB-MED-01",
+    "steps": [
+      "Log activity and flag for regular update lifecycle.",
+      "Verify mitigation controls are active in surrounding microservices."
+    ]
+  },
+  "LOW": {
+    "playbook_id": "PB-LOW-01",
+    "steps": [
+      "Record the event in the security audit log.",
+      "Continue routine monitoring for repeated occurrences."
+    ]
+  },
+  "RANSOMWARE": {
+    "playbook_id": "PB-RANSOM-01",
+    "steps": [
+      "Disconnect infected endpoints from the network immediately.",
+      "Preserve forensic evidence before remediation.",
+      "Notify executive incident response stakeholders."
+    ]
+  }
+}

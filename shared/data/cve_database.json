@@ -1,0 +1,32 @@
+{
+  "CVE-2026-0001": {
+    "id": "CVE-2026-0001",
+    "description": "Remote Code Execution vulnerability in Apache Struts v4.2 due to improper input validation in HTTP Content-Type headers. Allows unauthenticated OGNL injection leading to full server compromise.",
+    "cvss_score": 9.8,
+    "severity": "CRITICAL"
+  },
+  "CVE-2026-0002": {
+    "id": "CVE-2026-0002",
+    "description": "SQL Injection vulnerability in Auth Service database helper allows remote extraction of user records.",
+    "cvss_score": 8.1,
+    "severity": "HIGH"
+  },
+  "CVE-2026-0003": {
+    "id": "CVE-2026-0003",
+    "description": "Path Traversal vulnerability in static file serving service allows reading arbitrary files.",
+    "cvss_score": 7.5,
+    "severity": "HIGH"
+  },
+  "CVE-2026-0004": {
+    "id": "CVE-2026-0004",
+    "description": "Privilege Escalation vulnerability in Container Runtime allows local users to gain root access.",
+    "cvss_score": 8.8,
+    "severity": "HIGH"
+  },
+  "CVE-2026-0005": {
+    "id": "CVE-2026-0005",
+    "description": "Cross-Site Scripting (XSS) vulnerability in Admin Dashboard input fields enables session hijacking.",
+    "cvss_score": 6.4,
+    "severity": "MEDIUM"
+  }
+}
