@@ -9,7 +9,7 @@ logger = logging.getLogger("decision_platform.router")
 
 # Tiered Model Mappings
 OLLAMA_MODEL_MAPPING = {
-    "ScoutAgent": "qemma3:1b",
+    "ScoutAgent": "gemma3:1b",
     "InvestigatorAgent": "gemma3:1b",
     "ImpactAgent": "llama3.2:3b",
     "CommanderAgent": "llama3.2:3b"
