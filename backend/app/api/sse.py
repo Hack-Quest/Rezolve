@@ -46,7 +46,7 @@ def _sse(event: str, data: dict) -> str:
     return f"event: {event}\ndata: {json.dumps(data)}\n\n"
 
 
-def stream_pipeline(raw_alert: str) -> Iterator[str]:
+def stream_pipeline(raw_alert: str, alert_id: str | None = None) -> Iterator[str]:
     """
     Run the 4 agents one at a time, emitting an SSE event after each.
 
@@ -112,6 +112,19 @@ def stream_pipeline(raw_alert: str) -> Iterator[str]:
             "total_s": round(time.time() - t0, 1),
             "results": envelope.model_dump(),
         })
+
+        # Persist results to the in-memory store so /api/alerts/{id} can
+        # serve them later. Only save when we have an alert_id — free-text
+        # alerts have no stable id to key on.
+        if alert_id is not None:
+            try:
+                from backend.app.models.store import store
+                store.save_results(alert_id, envelope)
+                logger.info(f"persisted results for {alert_id}")
+            except Exception:
+                # Never let store persistence break the stream — the pipeline
+                # already completed successfully, the client has its brief.
+                logger.exception(f"failed to persist results for {alert_id}")
 
     except Exception as e:  # never crash the stream mid-demo
         logger.exception("pipeline failed")

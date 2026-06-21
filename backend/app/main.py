@@ -7,6 +7,8 @@ Run from the PROJECT ROOT (so `backend` imports as a package, same as the CLI):
 
 Endpoints:
     GET /api/health                      -> {"ok": true}
+    GET /api/alerts                      -> list of all alerts in the store
+    GET /api/alerts/{alert_id}           -> single alert, with pipeline_results if processed
     GET /api/stream?alert_id=alert-001   -> SSE stream (replay a sample alert)
     GET /api/stream?raw_alert=...        -> SSE stream (free-text alert)
 """
@@ -17,6 +19,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 
 from backend.app.api.sse import stream_pipeline, load_alert_text
+from backend.app.models.store import store, StoredAlert
 
 logging.basicConfig(level=logging.INFO)
 
@@ -31,9 +34,34 @@ app.add_middleware(
 )
 
 
+# Pre-seed the in-memory alert store on startup.
+# Done at import time (not in a lifespan handler) for simplicity — the store
+# is in-memory only, so there's no async I/O to wait for.
+store.seed_from_sample_file()
+
+
 @app.get("/api/health")
 def health():
     return {"ok": True}
+
+
+@app.get("/api/alerts", response_model=list[StoredAlert])
+def list_alerts():
+    """
+    Return every alert in the store, ordered by id.
+    Includes processed_at and pipeline_results if the alert has been run
+    through the pipeline; otherwise those fields are null.
+    """
+    return store.list_alerts()
+
+
+@app.get("/api/alerts/{alert_id}", response_model=StoredAlert)
+def get_alert(alert_id: str):
+    """Return one alert by id. 404 if not in the store."""
+    alert = store.get_alert(alert_id)
+    if alert is None:
+        raise HTTPException(404, f"alert '{alert_id}' not found")
+    return alert
 
 
 @app.get("/api/stream")
@@ -45,6 +73,10 @@ def stream(
     Native browser EventSource is GET-only and can't send a body, so the alert
     arrives as a query param. For the demo you replay canned alerts by id; the
     server looks up the raw_log. Free-text is supported too.
+
+    When alert_id is provided, the pipeline's final results are also persisted
+    to the in-memory store (so /api/alerts/{id} returns them after the stream
+    completes).
     """
     if alert_id:
         try:
@@ -62,7 +94,7 @@ def stream(
         "X-Accel-Buffering": "no",  # stop nginx/proxies from buffering the stream
     }
     return StreamingResponse(
-        stream_pipeline(text),
+        stream_pipeline(text, alert_id=alert_id),
         media_type="text/event-stream",
         headers=headers,
     )
