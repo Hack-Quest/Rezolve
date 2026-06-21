@@ -116,3 +116,6 @@
   stroke-dasharray: 8 6;
   animation: dash 25s linear infinite;
 }
+html {
+  scroll-behavior: smooth;
+}

@@ -18,12 +18,6 @@ export default function Footer() {
         {/* Navigation Routing Links */}
         <nav className="flex flex-wrap justify-center gap-lg">
           <Link
-            to="/documentation"
-            className="text-sm text-slate-500 hover:text-primary transition-colors"
-          >
-            Documentation
-          </Link>
-          <Link
             to="/status"
             className="text-sm text-slate-500 hover:text-primary transition-colors"
           >
