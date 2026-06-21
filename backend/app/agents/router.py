@@ -1,6 +1,7 @@
 import logging
 import httpx
 from backend.app.config import settings
+from backend.app.agents.warmup import get_current, BIG_MODEL_AGENTS
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -33,6 +34,21 @@ def call_llm(prompt: str, agent_name: str) -> str:
     # Select appropriate models for this agent
     ollama_model = OLLAMA_MODEL_MAPPING.get(agent_name, settings.OLLAMA_MODEL)
     groq_model = GROQ_MODEL_MAPPING.get(agent_name, settings.GROQ_MODEL)
+
+    # Impact/Commander need the big model. A background warm-up was kicked
+    # off at pipeline start (see warmup.start_new_run, called from sse.py)
+    # in parallel with Scout + Investigator. Wait here — briefly, with a
+    # cap — for it to finish before we attempt Ollama, instead of racing
+    # a cold load inside the 10s request timeout below. If Impact already
+    # waited and the model still wasn't ready, Commander's wait() picks up
+    # against the SAME Event right where Impact's left off — the warm-up
+    # thread keeps loading in the background regardless of what either
+    # agent's own request did.
+    if agent_name in BIG_MODEL_AGENTS:
+        warmer = get_current()
+        if warmer is not None and not warmer.ready.is_set():
+            logger.info(f"[{agent_name}] big model not confirmed warm yet — waiting up to 6s...")
+            warmer.wait(timeout=6.0)
     
     # 1. Attempt Ollama
     ollama_endpoint = f"{settings.OLLAMA_URL.rstrip('/')}/api/generate"
@@ -45,6 +61,11 @@ def call_llm(prompt: str, agent_name: str) -> str:
             "think": False,
             "format": "json"
         }
+        if agent_name in BIG_MODEL_AGENTS:
+            # Keep it resident past this single call — must outlive the
+            # Impact -> Commander gap (and ideally to the next alert).
+            from backend.app.agents.warmup import BIG_MODEL_KEEP_ALIVE
+            payload["keep_alive"] = BIG_MODEL_KEEP_ALIVE
         
         with httpx.Client() as client:
             response = client.post(

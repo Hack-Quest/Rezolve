@@ -19,6 +19,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 
 from backend.app.api.sse import stream_pipeline, load_alert_text
+from backend.app.agents.warmup import warm_at_startup
 from backend.app.models.store import store, StoredAlert
 
 logging.basicConfig(level=logging.INFO)
@@ -38,6 +39,11 @@ app.add_middleware(
 # Done at import time (not in a lifespan handler) for simplicity — the store
 # is in-memory only, so there's no async I/O to wait for.
 store.seed_from_sample_file()
+
+# Pre-load the big model (llama3:8b) the moment the server boots, so the
+# FIRST alert run during the live demo doesn't eat a cold-load penalty.
+# Fire-and-forget background thread — doesn't block server startup.
+warm_at_startup()
 
 
 @app.get("/api/health")

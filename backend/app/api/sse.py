@@ -21,6 +21,7 @@ from backend.app.agents.scout import scout_alert
 from backend.app.agents.investigator import investigate_scout_output
 from backend.app.agents.impact import assess_impact
 from backend.app.agents.commander import generate_command
+from backend.app.agents.warmup import start_new_run
 from backend.app.models.schemas import PipelineResults
 
 logger = logging.getLogger("decision_platform.sse")
@@ -59,6 +60,12 @@ def stream_pipeline(raw_alert: str, alert_id: str | None = None) -> Iterator[str
     """
     t0 = time.time()
     yield _sse("pipeline_start", {"raw_alert": raw_alert})
+
+    # Kick off the big model (llama3:8b) loading in the background NOW,
+    # in parallel with Scout + Investigator below — both of which run on
+    # the small qwen model and take a few seconds combined. That's free
+    # head-start time for the big model's load before Impact needs it.
+    start_new_run()
 
     try:
         # --- Scout -----------------------------------------------------
